@@ -22,6 +22,9 @@ attr = element.getAttribute("foo")
 
 var nilla = (function() {
 	var v = {};
+	v.events = {
+		'click': 'onclick'
+	};
 	//Add attrs and text to element
 	v.attrs = function(element, attrs) {
 		for(var i in attrs) {
@@ -38,10 +41,22 @@ var nilla = (function() {
 		if(typeof els == 'string') {
 			els = v.find(els);
 		}
-		v.each(els, function(el) {
-		  el.addEventListener(e_type, callback);
-		});
+		if(els.length == undefined) {
+			v.bindOne(els, e_type, callback);
+		} else {
+			v.each(els, function(el) {
+				v.bindOne(el, e_type, callback);
+			});
+		}
 		return els;
+	};
+	v.bindOne = function(el, e_type, callback) {
+		if (!el.addEventListener) {
+			el.attachEvent(v.events[e_type], callback);
+		}
+		else {
+			el.addEventListener(e_type, callback, false);
+		}
 	};
 	//Make new element and all attributes and html
 	v.create = function(selector, attrs) {
@@ -55,7 +70,15 @@ var nilla = (function() {
 		if(typeof els == 'string') {
 			els = v.find(els);
 		}
-		[].forEach.call(els, callback);
+		if(![].forEach) {
+			for(var e in els) {
+				if(typeof els[e] == 'object') {
+					callback(els[e]);
+				}
+			}
+		} else {
+			[].forEach.call(els, callback);
+		}
 		return els;
 	};
 	//Remove all children from element
@@ -89,13 +112,20 @@ var nilla = (function() {
 			}
 		});
 		return res;
-	}
+	};
 	//Load script
-	v.load = function(script) {
+	v.loadScript = function(script) {
 		var scr = document.createElement('script');
 		scr.src = script;
 		document.body.appendChild(scr);
-	}
+	};
+	v.load = function(callback) {
+		if(!document.addEventListener) {
+			window.onload = callback;
+		} else {
+			document.addEventListener("DOMContentLoaded", callback);
+		}
+	};
 	return v;
 })();
 
@@ -106,15 +136,15 @@ function formatCurrency(data) {
 }
 
 //Doc Ready
-document.addEventListener("DOMContentLoaded", function() {
+nilla.load(function() {
 	var a = nilla.create('a', {
-		href: '#',
-		html: 'click me'
+		'href': '#',
+		'html': 'click me'
 	});
 	var p = nilla.create('p', {
-		id: 'test',
-		class: 'red',
-		html: '<strong>here we go!</strong> <em>woot</em>.'
+		'id': 'test',
+		'class': 'red',
+		'html': '<strong>here we go!</strong> <em>woot</em>.'
 	});
 	p.appendChild(a);
 	document.body.appendChild(p);
@@ -122,11 +152,11 @@ document.addEventListener("DOMContentLoaded", function() {
 		console.log(el);
 	});
 	nilla.bind('ul li', 'click', function(e) {
-		console.log(e.srcElement.textContent);
+		console.log(e.srcElement.innerText);
 	});
-	lis = nilla.lastOfType('ul', 'li');
+	var lis = nilla.lastOfType('ul', 'li');
 	nilla.each(lis, function(li) {
 		nilla.attrs(li, {style: 'color:red'});
 	});
-	nilla.load('http://openexchangerates.org/latest.json?callback=formatCurrency');
+	nilla.loadScript('http://openexchangerates.org/latest.json?callback=formatCurrency');
 });
