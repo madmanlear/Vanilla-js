@@ -7,6 +7,38 @@
 	<meta charset="UTF-8">
 	<title></title>
 	<script src="vanilla.js"></script>
+	<script>
+	  //JSONP Test callback
+    function formatCurrency(data) {
+    	console.log(data);
+    }
+
+    //Doc Ready
+    nilla.load(function() {
+    	var a = nilla.create('a', {
+    		'href': '#',
+    		'html': 'click me'
+    	});
+    	var p = nilla.create('p', {
+    		'id': 'test',
+    		'class': 'red',
+    		'html': '<strong>here we go!</strong> <em>woot</em>.'
+    	});
+    	p.appendChild(a);
+    	document.body.appendChild(p);
+    	nilla.each('ul li', function(el) {
+    		console.log(el);
+    	});
+    	nilla.bind('ul li', 'click', function(e) {
+    		console.log(e.srcElement.innerText);
+    	});
+    	var lis = nilla.lastOfType('ul', 'li');
+    	nilla.each(lis, function(li) {
+    		nilla.attrs(li, {style: 'color:red'});
+    	});
+    	nilla.loadScript('http://openexchangerates.org/latest.json?callback=formatCurrency');
+    });
+	</script>
 </head>
 <body>
   <div id="header">

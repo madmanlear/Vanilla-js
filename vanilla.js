@@ -1,25 +1,3 @@
-/*
-This is a small class for replicating the most often-used (by me, at least) jQuery functionality in 2kb. Examples follow.
-Includes:
-  * Find elements
-  * Create element
-  * Update attributes for element
-  * Iterate through elements with callback
-  * Bind events with callback
-  * Empty children from element
-  * Load script
-
-Other useful shortcuts build into js:
-parent = element.parentNode
-clone = element.cloneNode(true)
-next = element.nextSibling
-html = element.innerHTML
-addClass = element.classList.add("foo")
-removeClass = element.classList.remove("foo")
-toggleClass = element.classList.toggle("foo")
-attr = element.getAttribute("foo") 
-*/
-
 var nilla = (function() {
 	var v = {};
 	v.events = {
@@ -128,35 +106,3 @@ var nilla = (function() {
 	};
 	return v;
 })();
-
-
-//JSONP Test callback
-function formatCurrency(data) {
-	console.log(data);
-}
-
-//Doc Ready
-nilla.load(function() {
-	var a = nilla.create('a', {
-		'href': '#',
-		'html': 'click me'
-	});
-	var p = nilla.create('p', {
-		'id': 'test',
-		'class': 'red',
-		'html': '<strong>here we go!</strong> <em>woot</em>.'
-	});
-	p.appendChild(a);
-	document.body.appendChild(p);
-	nilla.each('ul li', function(el) {
-		console.log(el);
-	});
-	nilla.bind('ul li', 'click', function(e) {
-		console.log(e.srcElement.innerText);
-	});
-	var lis = nilla.lastOfType('ul', 'li');
-	nilla.each(lis, function(li) {
-		nilla.attrs(li, {style: 'color:red'});
-	});
-	nilla.loadScript('http://openexchangerates.org/latest.json?callback=formatCurrency');
-});
