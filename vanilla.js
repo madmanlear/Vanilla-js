@@ -1,4 +1,15 @@
 /*
+This is a small class for replicating the most often-used (by me, at least) jQuery functionality in 2kb. Examples follow.
+Includes:
+  * Find elements
+  * Create element
+  * Update attributes for element
+  * Iterate through elements with callback
+  * Bind events with callback
+  * Empty children from element
+  * Load script
+
+Other useful shortcuts build into js:
 parent = element.parentNode
 clone = element.cloneNode(true)
 next = element.nextSibling
