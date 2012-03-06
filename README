@@ -1,4 +1,4 @@
-This is a small class for replicating the most often-used (by me, at least) jQuery functionality in 2kb. Examples follow.
+This is a small class for replicating the most often-used (by me, at least) jQuery functionality in 2kb. Examples in the vanilla.js file.
 
 Includes:
 
