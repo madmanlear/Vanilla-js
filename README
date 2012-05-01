@@ -11,6 +11,8 @@ Includes:
 * Bind events with callback
 * Empty children from element
 * Load script
+* Get and set text from element
+* Doc Ready
 
 Other useful shortcuts build into js:
 parent = element.parentNode

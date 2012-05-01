@@ -1,62 +1,46 @@
 var nilla = (function() {
 	var v = {};
-	v.events = {
-		'click': 'onclick'
-	};
 	//Add attrs and text to element
 	v.attrs = function(element, attrs) {
 		for(var i in attrs) {
-			if(i == 'html') {
+			if(i === 'html') {
 				element.innerHTML = attrs[i];
 			} else {
-			  element.setAttribute(i, attrs[i]);	
+				element.setAttribute(i, attrs[i]);
 			}
 		}
 		return element;
 	};
 	//Bind an event to elements
 	v.bind = function(els, e_type, callback) {
-		if(typeof els == 'string') {
+		if(typeof els === 'string') {
 			els = v.find(els);
 		}
-		if(els.length == undefined) {
-			v.bindOne(els, e_type, callback);
-		} else {
-			v.each(els, function(el) {
-				v.bindOne(el, e_type, callback);
-			});
-		}
+		v.each(els, function(el) {
+			if (!el.addEventListener) {
+				el.attachEvent('on'+e_type, callback);
+			} else {
+				el.addEventListener(e_type, callback, false);
+			}
+		});
 		return els;
-	};
-	v.bindOne = function(el, e_type, callback) {
-		if (!el.addEventListener) {
-			el.attachEvent(v.events[e_type], callback);
-		}
-		else {
-			el.addEventListener(e_type, callback, false);
-		}
 	};
 	//Make new element and all attributes and html
 	v.create = function(selector, attrs) {
-		if(!attrs) attrs = {};
+		if(!attrs) { attrs = {}; }
 		var res = document.createElement(selector);
 		v.attrs(res, attrs);
 		return res;
 	};
 	//Iterate through elements and apply a callback function to each
 	v.each = function(els, callback) {
-		if(typeof els == 'string') {
+		if(typeof els === 'string') {
 			els = v.find(els);
 		}
-		if(![].forEach) {
-			for(var e in els) {
-				if(typeof els[e] == 'object') {
-					callback(els[e]);
-				}
-			}
-		} else {
-			[].forEach.call(els, callback);
+		for(var i=0; i<els.length; i++){
+			callback(els[i]);
 		}
+		//[].forEach.call(els, callback);
 		return els;
 	};
 	//Remove all children from element
@@ -69,7 +53,7 @@ var nilla = (function() {
 	//DOM selector
 	v.find = function(selector) {
 		var res = [];
-		if(selector.substring(0,1) == '#') {
+		if(selector.substring(0,1) === '#') {
 			//Find by id
 			res = [document.getElementById(selector.replace('#', ''))];
 		} else {
@@ -92,16 +76,37 @@ var nilla = (function() {
 		return res;
 	};
 	//Load script
-	v.loadScript = function(script) {
+	v.load = function(script) {
 		var scr = document.createElement('script');
 		scr.src = script;
 		document.body.appendChild(scr);
 	};
-	v.load = function(callback) {
-		if(!document.addEventListener) {
-			window.onload = callback;
+	//Get and set text
+	v.text = function(element, text) {
+		if(text) {
+			if(element.textContent) {
+				element.textContent = text;
+			} else {
+				element.innerText = text;
+			}
 		} else {
-			document.addEventListener("DOMContentLoaded", callback);
+			return element.textContent || element.innerText;
+		}
+	};
+	//Document Ready
+	v.docReady = function(callback) {
+		if(document.addEventListener) {
+			document.addEventListener('DOMContentLoaded', function() {
+				document.removeEventListener("DOMContentLoaded", callback, false);
+				callback();
+			}, false);
+		} else if(document.attachEvent) {
+			document.attachEvent('onreadystatechange', function(){
+				if (document.readyState === "complete") {
+					document.detachEvent("onreadystatechange", callback);
+					callback();
+				}
+			});
 		}
 	};
 	return v;

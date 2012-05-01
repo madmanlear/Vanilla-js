@@ -14,7 +14,7 @@
     }
 
     //Doc Ready
-    nilla.load(function() {
+    nilla.docReady(function() {
     	var a = nilla.create('a', {
     		'href': '#',
     		'html': 'click me'
@@ -30,13 +30,13 @@
     		console.log(el);
     	});
     	nilla.bind('ul li', 'click', function(e) {
-    		console.log(e.srcElement.innerText);
+    		console.log(nilla.text(e.srcElement));
     	});
     	var lis = nilla.lastOfType('ul', 'li');
     	nilla.each(lis, function(li) {
     		nilla.attrs(li, {style: 'color:red'});
     	});
-    	nilla.loadScript('http://openexchangerates.org/latest.json?callback=formatCurrency');
+    	nilla.load('http://openexchangerates.org/latest.json?callback=formatCurrency');
     });
 	</script>
 </head>
